@@ -17,12 +17,14 @@ int isDigitsDintincts(int document[]){
     
 }
 
-int verifyDigit(int document[], int digit){
+int verifyDigit(int document[], int digit, int module[]){
     
-    int sum = 0, rest = 0, i = 0, module = digit + 1;
+    int sum = 0, rest = 0, i = 0;
     
     for(i = 0; i < digit; i++){
-        sum += document[i] * module--;
+        
+        sum += document[i] * module[i];
+        
     }
     
     rest = ((sum * 10) % 11) % 10;
@@ -53,11 +55,17 @@ void getOriginState(int digit){
 int main()
 {
     
+    int modules[4][13] = {
+        {10,9,8,7,6,5,4,3,2},
+        {11,10,9,8,7,6,5,4,3,2},
+        {5,4,3,2,9,8,7,6,5,4,3,2},
+        {6,5,4,3,2,9,8,7,6,5,4,3,2},
+    };
     char document[50];
     int formatedDocument[11];
     int i = 0, count = 0;
     
-    printf("Digite seu CPF: ");
+    printf("Digite seu CPF ou CNPJ: ");
     scanf("%s", document);
     printf("\e[1;1H\e[2J");
     
@@ -71,16 +79,37 @@ int main()
         
     }
     
-    printf("CPF: %s\n", document);
+    printf("Documento: %s\n", document);
     
-    if(
-        isDigitsDintincts(formatedDocument) &&
-        (verifyDigit(formatedDocument, 9) && verifyDigit(formatedDocument, 10))){
-        printf("Status: Válido\n");
-        getOriginState(formatedDocument[8]);
+    if(isDigitsDintincts(formatedDocument)){
+        
+        if(count == 11){
+            
+            if(verifyDigit(formatedDocument, 9, modules[0]) &&
+                verifyDigit(formatedDocument, 10, modules[1])){
+                printf("Status: Válido\n");
+                getOriginState(formatedDocument[8]);
+            }else{
+                printf("Error: CPF inválido");
+            }
+        
+        }else if(count == 14){
+            
+            if(verifyDigit(formatedDocument, 12, modules[2]) &&
+                verifyDigit(formatedDocument, 13, modules[3])){
+                printf("Status: Válido\n");
+            }else{
+                printf("Error: CNPJ inválido");
+            }
+            
+        }else{
+            printf("Error: quantidade de dígitos inválida");
+        }
+        
     }else{
-        printf("Status: Inválido");
+        printf("Error: dígitos não distintos");
     }
     
     return 0;
+    
 }
